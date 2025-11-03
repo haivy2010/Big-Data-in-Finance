@@ -304,8 +304,9 @@ def train_lr_spark(df_pd: pd.DataFrame, feats: list[str]) -> tuple[Pipeline, flo
     for c in feats:
         df_pd[c] = pd.to_numeric(df_pd[c], errors="coerce")
     sdf = get_spark().createDataFrame(df_pd)
+    sdf = sdf.dropna(subset=["label"])
 
-    # Split
+    # Split (Sau khi đã lọc)
     train, test = sdf.randomSplit([0.8, 0.2], seed=42)
 
     # Impute -> Assemble -> LR
@@ -1290,5 +1291,6 @@ if HAS_STREAMLIT:
 else:
 
     main_cli()
+
 
 
