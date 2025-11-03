@@ -314,7 +314,6 @@ def train_lr_spark(df_pd: pd.DataFrame, feats: list[str]) -> tuple[Pipeline, flo
     imputer = Imputer(inputCols=feats, outputCols=imp_cols, strategy="median")
     assembler = VectorAssembler(inputCols=imp_cols, outputCol="features", handleInvalid="keep")
     lr = LogisticRegression(featuresCol="features", labelCol="label", maxIter=50)
-
     model = Pipeline(stages=[imputer, assembler, lr]).fit(train)
 
     # Đánh giá
@@ -1291,6 +1290,7 @@ if HAS_STREAMLIT:
 else:
 
     main_cli()
+
 
 
 
