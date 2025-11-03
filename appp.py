@@ -61,9 +61,8 @@ def get_spark() -> SparkSession:
         .master(os.getenv("SPARK_MASTER", "local[*]"))
         .config("spark.driver.host", "127.0.0.1")
         .config("spark.ui.enabled", "false")
-        .config("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .config("spark.driver.memory", "512m")
-
+        .config("spark.driver.memory", "512m") 
+        .config("spark.sql.execution.arrow.pyspark.enabled", "false") 
         .getOrCreate()
     )
 spark = get_spark()
@@ -1291,4 +1290,5 @@ if HAS_STREAMLIT:
 else:
 
     main_cli()
+
 
