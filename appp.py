@@ -62,6 +62,8 @@ def get_spark() -> SparkSession:
         .config("spark.driver.host", "127.0.0.1")
         .config("spark.ui.enabled", "false")
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
+        .config("spark.driver.memory", "512m")
+
         .getOrCreate()
     )
 spark = get_spark()
@@ -1289,3 +1291,4 @@ if HAS_STREAMLIT:
 else:
 
     main_cli()
+
