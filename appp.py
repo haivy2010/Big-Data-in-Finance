@@ -300,14 +300,23 @@ def train_lr_spark(df_pd: pd.DataFrame, feats: list[str]) -> tuple[Pipeline, flo
     if len(df_pd) < 200:
         return None, float("nan"), float("nan")
 
-    # Ép kiểu số chắc chắn
+    # Ép kiểu số chắc chắn cho features
     for c in feats:
         df_pd[c] = pd.to_numeric(df_pd[c], errors="coerce")
     sdf = get_spark().createDataFrame(df_pd)
+    sdf = sdf.withColumn("label", sdf["label"].cast(DoubleType()))
     sdf = sdf.dropna(subset=["label"])
+    sdf = sdf.filter( (sdf["label"] == 0.0) | (sdf["label"] == 1.0) )
 
-    # Split (Sau khi đã lọc)
+    # Split (Sau khi đã lọc sạch)
+    if sdf.count() < 20: # Nếu còn quá ít dữ liệu sau khi lọc
+         return None, float("nan"), float("nan")
+
     train, test = sdf.randomSplit([0.8, 0.2], seed=42)
+    
+    # Phải kiểm tra train/test không bị rỗng sau khi split
+    if train.count() == 0 or test.count() == 0:
+        return None, float("nan"), float("nan")
 
     # Impute -> Assemble -> LR
     imp_cols = [f"{c}__imp" for c in feats]
@@ -1290,6 +1299,7 @@ if HAS_STREAMLIT:
 else:
 
     main_cli()
+
 
 
 
