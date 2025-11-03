@@ -54,13 +54,14 @@ except Exception:
     
 @st.cache_resource(show_spinner=False)
 def get_spark() -> SparkSession:
+    """Khởi tạo và trả về một SparkSession đã được cấu hình."""
     return (
         SparkSession.builder
         .appName("CreditDashboard")
         .master(os.getenv("SPARK_MASTER", "local[*]"))
+        .config("spark.driver.host", "127.0.0.1")
+        .config("spark.ui.enabled", "false")
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .config("spark.driver.extraJavaOptions", "-Djava.security.manager=allow")
-        .config("spark.executor.extraJavaOptions", "-Djava.security.manager=allow")
         .getOrCreate()
     )
 spark = get_spark()
@@ -1286,4 +1287,5 @@ def main_streamlit():
 if HAS_STREAMLIT:
     main_streamlit()
 else:
+
     main_cli()
